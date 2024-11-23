@@ -14,6 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.List;
@@ -54,6 +55,9 @@ public class WebShopApplication {
             List<Brand> brands = brandRepository.findAll();
             List<Category> categories = categoryRepository.findAll();
 
+            log.info("Added Brands: {}", brands.stream().map(Brand::getName).toList());
+            log.info("Added Product: {}", categories.stream().map(Category::getName).toList());
+
             productRepository.saveAll(List.of(
                     new Product(
                             "Sennheiser Momentum 4",
@@ -73,6 +77,8 @@ public class WebShopApplication {
             ));
 
             log.info("Added Product: {}", productRepository.findBySlug("sennheiser-momentum-4").get().getName());
+
+            log.info("Products fetched: {}", productRepository.findAll(Pageable.unpaged()).getContent().size());
         };
     }
 }
