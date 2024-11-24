@@ -20,27 +20,27 @@ public class ProductController {
     }
 
     @GetMapping
-    public Page<Product> getProducts(final Pageable pageable) {
+    public Page<ProductDto> getProducts(final Pageable pageable) {
         return productService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
-    public Product getProduct(@PathVariable final Long id) {
+    public ProductDto getProduct(@PathVariable final Long id) {
         return productService.findOne(id);
     }
 
     @GetMapping("/slug/{slug}")
-    public Product getProduct(@PathVariable("slug") String slug) {
+    public ProductDto getProductBySlug(@PathVariable("slug") String slug) {
         return productService.findBySlug(slug);
     }
 
     @GetMapping("/brand/{brandId}")
-    public Page<Product> getProductsByBrand(@PathVariable Long brandId, Brand brand, Pageable pageable) {
+    public Page<ProductDto> getProductsByBrand(@PathVariable Long brandId, Brand brand, Pageable pageable) {
         return productService.findAllByBrand(brand, pageable);
     }
 
     @GetMapping("/category/{categoryId}")
-    public Page<Product> getProductsByCategory(@PathVariable Long categoryId, Category category, Pageable pageable) {
+    public Page<ProductDto> getProductsByCategory(@PathVariable Long categoryId, Category category, Pageable pageable) {
         return productService.findAllByCategory(category, pageable);
     }
 }
