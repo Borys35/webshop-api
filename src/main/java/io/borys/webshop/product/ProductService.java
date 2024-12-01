@@ -4,9 +4,7 @@ import io.borys.webshop.brand.Brand;
 import io.borys.webshop.category.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ProductService {
@@ -25,12 +23,12 @@ public class ProductService {
 
     public ProductDto findOne(Long id) throws RuntimeException {
         return productMapper.toProductDto(productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product with id \"" + id + "\" not found")));
+                .orElseThrow(() -> new ProductNotFoundException("Product with ID \"" + id + "\" not found")));
     }
 
-    public ProductDto findBySlug(String slug) throws RuntimeException {
+    public ProductDto findBySlug(String slug) {
         return productMapper.toProductDto(productRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product with slug \"" + slug + "\" not found")));
+                .orElseThrow(() -> new ProductNotFoundException("Product with slug \"" + slug + "\" not found")));
     }
 
     public Page<ProductDto> findAllByBrand(Brand brand, Pageable pageable) {
