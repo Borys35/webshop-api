@@ -26,4 +26,21 @@ public class ProductDto implements Serializable {
     Integer stock;
     List<String> imageUrls;
     Map<String, String> specifications;
+
+    @Override
+    public String toString() {
+        return "ProductDto{" +
+                "productId=" + productId +
+                ", slug='" + slug + '\'' +
+                ", name='" + name + '\'' +
+                ", brandId=" + brandId +
+                ", categoryId=" + categoryId +
+                ", stock=" + stock +
+                ", currency=" + currency +
+                ", priceAmount=" + priceAmount +
+                ", imageUrls=" + imageUrls +
+                ", categoryName='" + categoryName + '\'' +
+                ", brandName='" + brandName + '\'' +
+                '}';
+    }
 }
