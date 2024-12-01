@@ -36,7 +36,7 @@ public class CartController {
     }
 
     @PutMapping("/update/{productId}")
-    public void updateProduct(@PathVariable Long productId, @RequestParam(required = true) int quantity) throws RuntimeException {
+    public void updateProductQuantity(@PathVariable Long productId, @RequestParam(required = true) int quantity) throws RuntimeException {
         ProductDto productDto = productService.findOne(productId);
         cartService.changeQuantity(productDto, quantity);
     }

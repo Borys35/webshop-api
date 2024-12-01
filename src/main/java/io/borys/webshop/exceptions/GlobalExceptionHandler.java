@@ -59,8 +59,8 @@ public class GlobalExceptionHandler {
         }
 
         if (exception instanceof RuntimeException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
-            errorDetail.setProperty("description", "Runtime error");
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(400), exception.getMessage());
+            errorDetail.setProperty("description", "Bad Request");
         }
 
         return errorDetail;

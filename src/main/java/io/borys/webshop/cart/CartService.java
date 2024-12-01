@@ -30,8 +30,10 @@ public class CartService {
     }
 
     public void changeQuantity(ProductDto product, int quantity) {
-        if (products.containsKey(product)) {
-            products.put(product, products.get(product) + quantity);
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than 0");
+        } else if (products.containsKey(product)) {
+            products.put(product, quantity);
         }
     }
 
