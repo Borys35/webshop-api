@@ -1,6 +1,7 @@
 package io.borys.webshop.cart;
 
 import io.borys.webshop.product.ProductDto;
+import io.borys.webshop.product.ProductRepository;
 import io.borys.webshop.product.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +17,9 @@ public class CartController {
     private final CartService cartService;
     private final ProductService productService;
 
-    public CartController(final ProductService productService) {
-        this.cartService = new CartService();
+    public CartController(final ProductService productService, final ProductRepository productRepository) {
         this.productService = productService;
+        this.cartService = new CartService(productRepository);
     }
 
     @GetMapping()
@@ -50,5 +51,10 @@ public class CartController {
     @DeleteMapping("/clear")
     public void clear() {
         cartService.clearProducts();
+    }
+
+    @PostMapping("/checkout")
+    public void checkout() {
+        cartService.checkout();
     }
 }
