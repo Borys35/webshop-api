@@ -1,5 +1,6 @@
 package io.borys.webshop.cart;
 
+import io.borys.webshop.order.OrderRepository;
 import io.borys.webshop.product.ProductDto;
 import io.borys.webshop.product.ProductRepository;
 import io.borys.webshop.product.ProductService;
@@ -17,9 +18,9 @@ public class CartController {
     private final CartService cartService;
     private final ProductService productService;
 
-    public CartController(final ProductService productService, final ProductRepository productRepository) {
+    public CartController(final ProductService productService, final ProductRepository productRepository, final OrderRepository orderRepository) {
         this.productService = productService;
-        this.cartService = new CartService(productRepository);
+        this.cartService = new CartService(productRepository, orderRepository);
     }
 
     @GetMapping()
@@ -53,6 +54,7 @@ public class CartController {
         cartService.clearProducts();
     }
 
+    // This route is restricted
     @PostMapping("/checkout")
     public void checkout() {
         cartService.checkout();

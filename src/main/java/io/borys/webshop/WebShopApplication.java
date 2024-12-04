@@ -152,8 +152,6 @@ public class WebShopApplication {
                     )
             ));
 
-            log.info("Added Product: {}", productRepository.findBySlug("sennheiser-momentum-4").get().getName());
-
             log.info("Products fetched: {}", productRepository.findAll(Pageable.unpaged()).getContent().size());
         };
     }

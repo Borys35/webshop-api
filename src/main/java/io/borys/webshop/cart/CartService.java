@@ -1,16 +1,19 @@
 package io.borys.webshop.cart;
 
+import io.borys.webshop.order.Order;
+import io.borys.webshop.order.OrderItem;
+import io.borys.webshop.order.OrderRepository;
 import io.borys.webshop.product.Product;
 import io.borys.webshop.product.ProductDto;
 import io.borys.webshop.product.ProductRepository;
+import io.borys.webshop.user.User;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -21,10 +24,12 @@ public class CartService {
 
     private final ConcurrentMap<ProductDto, Integer> products;
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
 
-    public CartService(final ProductRepository productRepository) {
+    public CartService(final ProductRepository productRepository, OrderRepository orderRepository) {
         products = new ConcurrentHashMap<>();
         this.productRepository = productRepository;
+        this.orderRepository = orderRepository;
     }
 
     public void addProduct(ProductDto product, int quantity) {
@@ -56,10 +61,10 @@ public class CartService {
     }
 
     public void checkout() {
-        // TODO: Create order with productsToSave from the cart
 
         // Check quantity and stock. Deduct if sufficient amount. Throw if not.
         List<Product> productsToSave = new ArrayList<>();
+        Set<OrderItem> orderItems = new HashSet<>();
         for (Map.Entry<ProductDto, Integer> entry : getProducts().entrySet()) {
             ProductDto productDto = entry.getKey();
             Integer quantity = entry.getValue();
@@ -68,9 +73,27 @@ public class CartService {
                 Product product = productRepository.findById(productDto.getProductId()).orElseThrow();
                 product.setStock(product.getStock() - quantity);
                 productsToSave.add(product);
+
+                orderItems.add(new OrderItem(quantity, product.getPrice(), product));
             }
         }
+        // Update products from the cart
         productRepository.saveAll(productsToSave);
+
+        // Get current user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) auth.getPrincipal();
+
+        // Create order with orderItems
+        Order order = Order.builder()
+                .user(currentUser)
+                .items(orderItems)
+                .build();
+        orderRepository.save(order);
+
+        // Flush repos
+        orderRepository.flush();
+        productRepository.flush();
 
         // Clear the cart
         clearProducts();
