@@ -1,5 +1,6 @@
 package io.borys.webshop.order;
 
+import io.borys.webshop.payment.Payment;
 import io.borys.webshop.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -32,9 +33,15 @@ public class Order {
     @CollectionTable(name = "order_item", joinColumns = @JoinColumn(name = "order_id"))
     private Set<OrderItem> items;
 
+    private OrderStatus status = OrderStatus.WAITING_FOR_PAYMENT;
+
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
+    private Payment payment;
+
     @Builder
-    public Order(Set<OrderItem> items, User user) {
+    public Order(Set<OrderItem> items, User user, Payment payment) {
         this.items = items;
         this.user = user;
+        this.payment = payment;
     }
 }

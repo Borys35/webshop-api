@@ -1,6 +1,7 @@
 package io.borys.webshop.cart;
 
 import io.borys.webshop.order.OrderRepository;
+import io.borys.webshop.payment.PaymentRepository;
 import io.borys.webshop.product.ProductDto;
 import io.borys.webshop.product.ProductRepository;
 import io.borys.webshop.product.ProductService;
@@ -18,9 +19,13 @@ public class CartController {
     private final CartService cartService;
     private final ProductService productService;
 
-    public CartController(final ProductService productService, final ProductRepository productRepository, final OrderRepository orderRepository) {
+    public CartController(
+            final ProductService productService,
+            final ProductRepository productRepository,
+            final OrderRepository orderRepository,
+            final PaymentRepository paymentRepository) {
         this.productService = productService;
-        this.cartService = new CartService(productRepository, orderRepository);
+        this.cartService = new CartService(productRepository, orderRepository, paymentRepository);
     }
 
     @GetMapping()
