@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 import java.util.Set;
@@ -22,7 +21,7 @@ public class Order {
     private Long id;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @CreationTimestamp
+    @Column(name = "createdAt", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
