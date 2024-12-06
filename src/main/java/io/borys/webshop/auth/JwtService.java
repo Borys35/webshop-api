@@ -1,5 +1,6 @@
 package io.borys.webshop.auth;
 
+import io.borys.webshop.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -33,7 +34,10 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        Map<String, Object> claims = new HashMap<>();
+        User user = (User) userDetails;
+        claims.put("roles", user.getRoles());
+        return generateToken(claims, userDetails);
     }
 
     public String generateToken(Map<String, Object> claims, UserDetails userDetails) {

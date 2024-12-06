@@ -38,6 +38,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/cart/checkout").authenticated()
                         .requestMatchers("/cart/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/users/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

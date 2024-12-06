@@ -8,6 +8,8 @@ import io.borys.webshop.product.Currency;
 import io.borys.webshop.product.Price;
 import io.borys.webshop.product.Product;
 import io.borys.webshop.product.ProductRepository;
+import io.borys.webshop.role.Role;
+import io.borys.webshop.role.RoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -37,8 +39,13 @@ public class WebShopApplication {
     }
 
     @Bean
-    public CommandLineRunner init(BrandRepository brandRepository, CategoryRepository categoryRepository, ProductRepository productRepository) {
+    public CommandLineRunner init(BrandRepository brandRepository, CategoryRepository categoryRepository, ProductRepository productRepository, RoleRepository roleRepository) {
         return args -> {
+            roleRepository.saveAll(List.of(
+                    new Role("ADMIN"),
+                    new Role("USER")
+            ));
+
             brandRepository.saveAll(List.of(
                     new Brand("Sennheiser"),
                     new Brand("Sony"),
