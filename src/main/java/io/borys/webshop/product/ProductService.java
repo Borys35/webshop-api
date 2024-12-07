@@ -1,7 +1,9 @@
 package io.borys.webshop.product;
 
 import io.borys.webshop.brand.Brand;
+import io.borys.webshop.brand.BrandRepository;
 import io.borys.webshop.category.Category;
+import io.borys.webshop.category.CategoryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,11 +12,17 @@ import org.springframework.stereotype.Service;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final BrandRepository brandRepository;
+    private final CategoryRepository categoryRepository;
 
     public ProductService(ProductRepository productRepository,
-                          ProductMapper productMapper) {
+                          ProductMapper productMapper,
+                          BrandRepository brandRepository,
+                          CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.brandRepository = brandRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public Page<ProductDto> findAll(Pageable pageable) {
@@ -31,11 +39,13 @@ public class ProductService {
                 .orElseThrow(() -> new ProductNotFoundException("Product with slug \"" + slug + "\" not found")));
     }
 
-    public Page<ProductDto> findAllByBrand(Brand brand, Pageable pageable) {
+    public Page<ProductDto> findAllByBrand(Long brandId, Pageable pageable) {
+        Brand brand = brandRepository.findById(brandId).orElseThrow();
         return productRepository.findAllByBrand(brand, pageable).map(productMapper::toProductDto);
     }
 
-    public Page<ProductDto> findAllByCategory(Category category, Pageable pageable) {
+    public Page<ProductDto> findAllByCategory(Long categoryId, Pageable pageable) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow();
         return productRepository.findAllByCategory(category, pageable).map(productMapper::toProductDto);
     }
 }

@@ -1,38 +1,101 @@
 package io.borys.webshop.product;
 
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import io.borys.webshop.lib.RestResponsePage;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.Objects;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-public class ProductControllerTest {
+@Testcontainers
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class ProductControllerTest {
 
-    static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest")
-            .withDatabaseName("borys")
-            .withUsername("borys")
-            .withPassword("borys");
+    @Container
+    @ServiceConnection
+    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
+    private static final Logger log = LoggerFactory.getLogger(ProductControllerTest.class);
+    RestClient client;
 
-    static {
-        postgreSQLContainer.start();
-        System.setProperty("spring.datasource.url", postgreSQLContainer.getJdbcUrl());
-        System.setProperty("spring.datasource.username", postgreSQLContainer.getUsername());
-        System.setProperty("spring.datasource.password", postgreSQLContainer.getPassword());
-        System.setProperty("spring.jpa.hibernate.ddl-auto", "create-drop");
+    @LocalServerPort
+    private int port;
+
+    @BeforeEach
+    void setUp() {
+        client = RestClient.create("http://localhost:" + port);
     }
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Test
+    void shouldFindAllProducts() {
+        RestResponsePage<ProductDto> products = client.get()
+                .uri("products?size=20&page=0")
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {
+                });
+
+        assert products != null;
+        assert !products.isEmpty();
+    }
 
     @Test
-    public void shouldFindAllProducts() throws Exception {
-        mockMvc.perform(get("/products"))
-                .andExpect(status().isOk());
+    void shouldFindProductById() {
+        ProductDto product = client.get()
+                .uri("products/1")
+                .retrieve()
+                .body(ProductDto.class);
+
+        assert product != null;
+        assert product.getProductId() == 1;
+        assert Objects.equals(product.getSlug(), "sennheiser-momentum-4");
+    }
+
+    @Test
+    void shouldFindProductBySlug() {
+        ProductDto product = client.get()
+                .uri("products/slug/sennheiser-momentum-4")
+                .retrieve()
+                .body(ProductDto.class);
+
+        assert product != null;
+        assert Objects.equals(product.getSlug(), "sennheiser-momentum-4");
+    }
+
+    @Test
+    void shouldFindProductByBrand() {
+        RestResponsePage<ProductDto> products = client.get()
+                .uri("products/brand/1")
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {
+                });
+
+        assert products != null;
+        assert !products.isEmpty();
+        products.forEach(product -> {
+            assert product.getBrandId() == 1;
+        });
+    }
+
+    @Test
+    void shouldFindProductByCategory() {
+        RestResponsePage<ProductDto> products = client.get()
+                .uri("products/category/1")
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {
+                });
+
+        assert products != null;
+        assert !products.isEmpty();
+        products.forEach(product -> {
+            assert product.getCategoryId() == 1;
+        });
     }
 }

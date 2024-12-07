@@ -3,10 +3,7 @@ package io.borys.webshop.product;
 import io.borys.webshop.brand.Brand;
 import io.borys.webshop.category.Category;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
@@ -16,6 +13,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @Entity
+@ToString
 @Table(name = "products")
 @EntityListeners(AuditingEntityListener.class)
 public class Product {
@@ -27,14 +25,16 @@ public class Product {
 
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "brand_id")
+    @ToString.Exclude
     private Brand brand;
 
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
+    @ToString.Exclude
     private Category category;
 
     private Price price;

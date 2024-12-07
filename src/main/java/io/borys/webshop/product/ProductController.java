@@ -1,7 +1,5 @@
 package io.borys.webshop.product;
 
-import io.borys.webshop.brand.Brand;
-import io.borys.webshop.category.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,12 +33,12 @@ public class ProductController {
     }
 
     @GetMapping("/brand/{brandId}")
-    public Page<ProductDto> getProductsByBrand(@PathVariable Long brandId, Brand brand, Pageable pageable) {
-        return productService.findAllByBrand(brand, pageable);
+    public Page<ProductDto> getProductsByBrand(@PathVariable Long brandId, Pageable pageable) {
+        return productService.findAllByBrand(brandId, pageable);
     }
 
     @GetMapping("/category/{categoryId}")
-    public Page<ProductDto> getProductsByCategory(@PathVariable Long categoryId, Category category, Pageable pageable) {
-        return productService.findAllByCategory(category, pageable);
+    public Page<ProductDto> getProductsByCategory(@PathVariable Long categoryId, Pageable pageable) {
+        return productService.findAllByCategory(categoryId, pageable);
     }
 }
