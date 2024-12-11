@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = {"pageable"})
 public class RestResponsePage<T> extends PageImpl<T> {
 
     @Serial
@@ -30,6 +30,7 @@ public class RestResponsePage<T> extends PageImpl<T> {
                             @JsonProperty("first") boolean first,
                             @JsonProperty("numberOfElements") int numberOfElements) {
         super(content, PageRequest.of(number, 20), 100);
+        System.out.println("Pageable: " + size + numberOfElements);
     }
 
     public RestResponsePage(List<T> content, Pageable pageable, long total) {
