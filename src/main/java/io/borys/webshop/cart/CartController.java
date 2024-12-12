@@ -59,7 +59,7 @@ public class CartController {
         cartService.clearProducts();
     }
 
-    // This route is restricted
+    // This route is restricted to all authenticated users
     @PostMapping("/checkout")
     public void checkout() {
         cartService.checkout();

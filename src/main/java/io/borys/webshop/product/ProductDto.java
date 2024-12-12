@@ -1,5 +1,6 @@
 package io.borys.webshop.product;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Data
 public class ProductDto implements Serializable {
     Long productId;
     String slug;
